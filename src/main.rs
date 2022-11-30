@@ -3,6 +3,7 @@ extern crate clap;
 extern crate itertools;
 extern crate regex;
 extern crate num;
+extern crate emergence;
 
 use clap::{Arg,App};
 use std::io::{self, BufRead};
@@ -34,9 +35,16 @@ fn main() {
 				.short("f")
 				.takes_value(true)
 				.help("Uses a file instead of reading from standard in"))
+		.arg(
+			Arg::with_name("stdin")
+				.short("i")
+				.help("Specifies we should read input from stdin")
+		)
 		.after_help("Longer explaination to appear after the options when \
 					displaying the help information from --help or -h")
 		.get_matches();
+
+	let day = matches.value_of("day").unwrap().parse::<u32>().unwrap();
 
 	let input;
 	if matches.is_present("file") {
@@ -45,14 +53,17 @@ fn main() {
 		input = file.lines()
 			.filter_map(|l| l.ok())
 			.collect::<Vec<String>>();
-	} else {
+	} else if matches.is_present("stdin") {
 		let stdin = io::stdin();
 		input = stdin.lock().lines()
 			.filter_map(|l| l.ok())
 			.collect::<Vec<String>>();
+	} else {
+		let aoc_fetcher = emergence::AoC::new(2021).expect("Couldn't instantiate AoC object");
+		let prob_input = aoc_fetcher.read_or_fetch(day as usize).expect("Couldn't fetch problem input");
+		input = prob_input.trim_end_matches('\n').split('\n').map(String::from).collect::<Vec<String>>();
 	}
 
-	let day = matches.value_of("day").unwrap().parse::<u32>().unwrap();
 	match day {
 		1 => day1::solve(input),
 		_ => println!("Oops! Day {} isn't implemented yet!", day)

@@ -9,6 +9,7 @@ regex = "*"
 itertools = "*"
 lazy_static = "1.4.0"
 num = "0.3"
+emergence = "1.0.0"
 
 [[bin]]
 name = "aoc"
