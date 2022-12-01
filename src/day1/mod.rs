@@ -1,8 +1,20 @@
-use itertools::Itertools;
-
 pub fn solve(inputs: Vec<String>) {
-	let inputs = inputs.iter().map(|line| line.parse::<u32>().unwrap()).collect_vec();
+	let mut current_calories = 0;
+	let mut elf_calories = Vec::new();
 
-	let part1 = inputs.iter().sum::<u32>();
-	println!("Part 1: {}", part1);
+	for input in inputs {
+		if input.is_empty() {
+			elf_calories.push(current_calories);
+			current_calories = 0;
+		} else {
+			current_calories += input.parse::<i32>().unwrap();
+		}
+	}
+	elf_calories.push(current_calories); // Ensure we get the last elf's calories
+
+	elf_calories.sort();
+	elf_calories.reverse();
+
+	println!("Part 1: {}", elf_calories[0]);
+	println!("Part 2: {}", elf_calories[0..3].iter().sum::<i32>());
 }
