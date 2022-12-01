@@ -2,6 +2,7 @@
 name = "advent_of_code_2022"
 version = "0.1.0"
 authors = ["Galen Elias <gelias@gmail.com>"]
+edition = "2021"
 
 [dependencies]
 clap = "2.33"
