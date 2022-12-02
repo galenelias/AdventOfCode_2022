@@ -4,71 +4,36 @@ pub fn solve(inputs: Vec<String>) {
 	let inputs = inputs.iter().map(|l| l.chars().collect_vec()).collect_vec();
 	let inputs = inputs.iter().map(|l| (l[0], l[2])).collect_vec();
 
-	let mut score = 0;
-	let mut score2 = 0;
+	let part1: u32 = inputs.iter()
+		.map(|input| match (input.0, input.1) {
+			('A', 'X') => 1 + 3,
+			('A', 'Y') => 2 + 6,
+			('A', 'Z') => 3 + 0,
+			('B', 'X') => 1 + 0,
+			('B', 'Y') => 2 + 3,
+			('B', 'Z') => 3 + 6,
+			('C', 'X') => 1 + 6,
+			('C', 'Y') => 2 + 0,
+			('C', 'Z') => 3 + 3,
+			_ => 0,
+		})
+		.sum();
 
-	for input in inputs {
-		match input.1 {
-			'X' => score += 1,
-			'Y' => score += 2,
-			'Z' => score += 3,
-			_ => (),
-		};
+	let part2: u32 = inputs.iter()
+		.map(|input| match (input.0, input.1) {
+			('A', 'X') => 3 + 0,
+			('A', 'Y') => 1 + 3,
+			('A', 'Z') => 2 + 6,
+			('B', 'X') => 1 + 0,
+			('B', 'Y') => 2 + 3,
+			('B', 'Z') => 3 + 6,
+			('C', 'X') => 2 + 0,
+			('C', 'Y') => 3 + 3,
+			('C', 'Z') => 1 + 6,
+			_ => 0,
+		})
+		.sum();
 
-		match input.0 {
-			'A' => { // rock
-				match input.1 {
-					'X' => score += 3,
-					'Y' => score += 6,
-					_ => (),
-				}
-			},
-			'B' => { // paper
-				match input.1 {
-					'Y' => score += 3,
-					'Z' => score += 6,
-					_ => (),
-				}
-			},
-			'C' => { // scissor
-				match input.1 {
-					'X' => score += 6,
-					'Z' => score += 3,
-					_ => (),
-				}
-			},
-			_ => (),
-		};
-
-		match input.0 {
-			'A' => { // rock
-				match input.1 {
-					'X' => score2 += 3 + 0, // scissor, lose
-					'Y' => score2 += 1 + 3, // rock, tie
-					'Z' => score2 += 2 + 6, // paper, win
-					_ => (),
-				}
-			},
-			'B' => { // paper
-				match input.1 {
-					'X' => score2 += 1 + 0, // rock, lose
-					'Y' => score2 += 2 + 3, // paper, tie
-					'Z' => score2 += 3 + 6, // scissor, win
-					_ => (),
-				}
-			},
-			'C' => { // scissor
-				match input.1 {
-					'X' => score2 += 2 + 0, // paper, lose
-					'Y' => score2 += 3 + 3, // scissor, tie
-					'Z' => score2 += 1 + 6, // rock, win
-					_ => (),
-				}
-			},
-			_ => (),
-		};
-
-	}
-	println!("Part 1: {}", score);
-	println!("Part 2: {}", score2);
+	println!("Part 1: {}", part1);
+	println!("Part 2: {}", part2);
 }
