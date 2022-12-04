@@ -17,50 +17,20 @@ mod day3;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-   /// Name of the person to greet
+   /// Reads puzzle input from the specified file
    #[arg(short, long)]
    file: Option<String>,
 
+   /// Reads puzzle input from standard in
    #[arg(short, long)]
    stdin: bool,
 
-   /// Number of times to greet
+   /// Specifies which day's challenge to run
    day: u32,
 }
 
 fn main() {
 	let cli = Cli::parse();
-
-	// let matches = App::new("Advent of Code")
-	// 	.author("Galen Elias, gelias@gmail.com")
-	// 	.version("0.1.0")
-	// 	.about("Advent of code solutions in Rust")
-	// 	.arg(
-	// 		Arg::with_name("day")
-	// 			.short("d")
-	// 			.required(true)
-	// 			.index(1)
-	// 			.help("specifies which day's challenge to run")
-	// 			.validator(|str|
-	// 				str.parse::<u32>()
-	// 					.or(Err("day must be an integer".to_owned()))
-	// 					.and_then(|v| match v {
-	// 						0..=25 => Ok(()),
-	// 						_ => Err("day must be between 1 and 25".to_owned())
-	// 					})))
-	// 	.arg(
-	// 		Arg::with_name("file")
-	// 			.short("f")
-	// 			.takes_value(true)
-	// 			.help("Uses a file instead of reading from standard in"))
-	// 	.arg(
-	// 		Arg::with_name("stdin")
-	// 			.short("i")
-	// 			.help("Specifies we should read input from stdin")
-	// 	)
-	// 	.after_help("Longer explaination to appear after the options when \
-	// 				displaying the help information from --help or -h")
-	// 	.get_matches();
 
 	let input;
 	if let Some(file_name) = cli.file {
