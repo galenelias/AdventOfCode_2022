@@ -5,12 +5,12 @@ authors = ["Galen Elias <gelias@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-clap = "2.33"
 regex = "*"
 itertools = "*"
 lazy_static = "1.4.0"
 num = "0.3"
 emergence = "1.0.0"
+clap = { version = "4.0.29", features = ["derive"] }
 
 [[bin]]
 name = "aoc"

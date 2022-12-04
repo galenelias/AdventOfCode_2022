@@ -5,7 +5,7 @@ extern crate regex;
 extern crate num;
 extern crate emergence;
 
-use clap::{Arg,App};
+use clap::Parser;
 use std::io::{self, BufRead};
 use std::io::{BufReader};
 use std::fs::File;
@@ -13,6 +13,17 @@ use std::fs::File;
 mod day1;
 mod day2;
 mod day3;
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+   /// Name of the person to greet
+   #[arg(short, long)]
+   name: String,
+
+   /// Number of times to greet
+   day: u32,
+}
 
 fn main() {
 	let matches = App::new("Advent of Code")
