@@ -5,7 +5,7 @@ authors = ["Galen Elias <gelias@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-clap = "2.33"
+clap = { version = "4.0.29", features = ["derive"] }
 regex = "*"
 itertools = "*"
 lazy_static = "1.4.0"
