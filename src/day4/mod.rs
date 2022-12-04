@@ -1,21 +1,17 @@
+use itertools::Itertools;
+
 pub fn solve(inputs: Vec<String>) {
 	let mut part1 = 0;
 	let mut part2 = 0;
 
 	for input in inputs {
-		let ranges = input.split_once(',').unwrap();
-		let r1 = ranges.0.split_once('-').unwrap();
-		let r1s = r1.0.parse::<u32>().unwrap();
-		let r1e = r1.1.parse::<u32>().unwrap();
-		let r2 = ranges.1.split_once('-').unwrap();
-		let r2s = r2.0.parse::<u32>().unwrap();
-		let r2e = r2.1.parse::<u32>().unwrap();
+		let p = input.split(&[',','-']).map(|s| s.parse::<u32>().unwrap()).collect_vec();
 
-		if (r1s >= r2s && r1e <= r2e) || (r2s >= r1s && r2e <= r1e) {
+		if (p[0] >= p[2] && p[1] <= p[3]) || (p[2] >= p[0] && p[3] <= p[1]) {
 			part1 += 1;
 		}
 
-		if !(r1s > r2e || r2s > r1e) {
+		if !(p[0] > p[3] || p[2] > p[1]) {
 			part2 += 1;
 		}
 	}
