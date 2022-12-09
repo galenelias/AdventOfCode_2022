@@ -18,6 +18,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -64,6 +65,7 @@ fn main() {
 		6 => day6::solve(input),
 		7 => day7::solve(input),
 		8 => day8::solve(input),
+		9 => day9::solve(input),
 		_ => println!("Oops! Day {} isn't implemented yet!", cli.day)
 	}
 }
