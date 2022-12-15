@@ -15,22 +15,14 @@ impl PacketElement
 		{
 			(PacketElement::Number(a), PacketElement::Number(b)) => a.cmp(b),
 			(PacketElement::List(a), PacketElement::List(b)) => {
-				for i in 0.. {
-					if i < a.len() && i < b.len() {
-						let res = a[i].cmp(&b[i]);
-						if res != Ordering::Equal {
-							return res;
-						}
-					} else if i < b.len() {
-						return Ordering::Less;
-					} 
-					else if i < a.len() { 
-						return Ordering::Greater;
-					} else {
-						return Ordering::Equal;
+				for (left, right) in a.iter().zip(b.iter()) {
+					match left.cmp(&right) {
+						Ordering::Equal => continue,
+						other => return other,
 					}
 				}
-				unreachable!("Shouldn't get here");
+
+				return a.len().cmp(&b.len());
 			},
 			(PacketElement::Number(a), PacketElement::List(_b)) =>  {
 				PacketElement::List(vec![PacketElement::Number(*a)]).cmp(other)
