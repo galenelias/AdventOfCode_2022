@@ -30,7 +30,6 @@ impl Resources {
 		}
 	}
 }
-// type Resources = HashMap<ResourceType, usize>;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 enum ResourceType
@@ -88,16 +87,12 @@ fn when_afford(resources: &Resources, cost: &Resources, robots: &Resources) -> O
 	}).max().unwrap())
 }
 
-fn recurse(minute: usize, mut resources: Resources, mut robots: Resources, blueprints: &[RobotBluePrint], max_resources_needed: &Resources, memo: &mut Memo) -> usize {
-	const TARGET_MINUTES: usize = 32;
-
-	if minute > TARGET_MINUTES {
+fn recurse(minute: usize, limit_minutes: usize, mut resources: Resources, mut robots: Resources, blueprints: &[RobotBluePrint], max_resources_needed: &Resources, memo: &mut Memo) -> usize {
+	if minute > limit_minutes {
 		return 0; 
-	} else if minute == TARGET_MINUTES {
+	} else if minute == limit_minutes {
 		return resources.get(&ResourceType::Geode);
 	}
-
-
 
 	for resource in &[ResourceType::Ore, ResourceType::Clay, ResourceType::Obsidian] {
 		if robots.get(&resource) > max_resources_needed.get(&resource) {
@@ -142,7 +137,7 @@ fn recurse(minute: usize, mut resources: Resources, mut robots: Resources, bluep
 
 			let mut new_robots = robots.clone();
 			*new_robots.entry(&blueprint.robot_type) += 1;
-			results.push(recurse(minute + days_to_afford + 1, new_resources, new_robots, blueprints, max_resources_needed, memo));
+			results.push(recurse(minute + days_to_afford + 1, limit_minutes, new_resources, new_robots, blueprints, max_resources_needed, memo));
 		}
 	}
 
@@ -152,16 +147,26 @@ fn recurse(minute: usize, mut resources: Resources, mut robots: Resources, bluep
 
 		// Add days_to_afford worth of resources
 		for resource in &ALL_RESOURCES {
-			*new_resources.entry(&resource) += (TARGET_MINUTES - minute) * robots.get(&resource);
+			*new_resources.entry(&resource) += (limit_minutes - minute) * robots.get(&resource);
 		}
-		results.push(recurse(TARGET_MINUTES, new_resources, robots, blueprints, max_resources_needed, memo)); //no-op
+		results.push(recurse(limit_minutes, limit_minutes, new_resources, robots, blueprints, max_resources_needed, memo)); //no-op
 	}
 
 	let result = results.iter().max().unwrap().clone();
-
 	memo.insert((minute, resources, robots), result);
 
 	return result;
+}
+
+// Figure out max resources needed to build any robot, as accumulating more than this much can't be spent
+fn get_max_blueprint_cost(blueprints: &[RobotBluePrint]) -> Resources {
+	let mut max_resources_needed = Resources{ ore: 0, clay: 0, obsidian: 0, geode: 0 };
+
+	for resource in &ALL_RESOURCES {
+		let entry = max_resources_needed.entry(&resource);
+		*entry = std::cmp::max(*entry, blueprints.iter().map(|b| b.cost.get(&resource)).max().unwrap());
+	}
+	max_resources_needed
 }
 
 pub fn solve(inputs: Vec<String>) {
@@ -195,24 +200,29 @@ pub fn solve(inputs: Vec<String>) {
 
 	let no_resources = Resources { ore: 0, clay: 0, obsidian: 0, geode: 0 };
 	let initial_robots = Resources { ore: 1, clay: 0, obsidian: 0, geode: 0 };
-	// Simulate each blueprint
-	for blueprint in &blueprints[0..] {
 
-		let mut max_resources_needed = Resources{ ore: 0, clay: 0, obsidian: 0, geode: 0 };
-		// Cap resources at max needed for any robot
-		for resource in &ALL_RESOURCES {
-			let entry = max_resources_needed.entry(&resource);
-			*entry = std::cmp::max(*entry, blueprint.robot_blueprints.iter().map(|b| b.cost.get(&resource)).max().unwrap());
-		}
-		println!("Max cost: {:?}", max_resources_needed);
+	for blueprint in &blueprints {
+		let max_resources_needed = get_max_blueprint_cost(&blueprint.robot_blueprints);
 		
 		let mut memo = Memo::new();
-		let geodes = recurse(0, no_resources, initial_robots, &blueprint.robot_blueprints, &max_resources_needed, &mut memo);
-		println!("Blueprint {}: {}", blueprint.num, geodes);
-		println!("Memo size = {}", memo.len());
+		let geodes = recurse(0, 24, no_resources, initial_robots, &blueprint.robot_blueprints, &max_resources_needed, &mut memo);
 
 		part1 += blueprint.num * geodes;
 	}
 
 	println!("Part 1: {}", part1);
+
+	let mut part2 = 1;
+	for blueprint in &blueprints[0..std::cmp::min(blueprints.len(), 3)] {
+		let max_resources_needed = get_max_blueprint_cost(&blueprint.robot_blueprints);
+		
+		let mut memo = Memo::new();
+		let geodes = recurse(0, 32, no_resources, initial_robots, &blueprint.robot_blueprints, &max_resources_needed, &mut memo);
+
+		println!("{} geodes", geodes);
+
+		part2 *= geodes;
+	}
+
+	println!("Part 2: {}", part2);
 }
